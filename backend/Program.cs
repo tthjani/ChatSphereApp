@@ -1,3 +1,4 @@
+using ChatSphere.DataService;
 using ChatSphere.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("reactApp", builder =>
     {
         builder.WithOrigins("http://localhost:5173") 
                .AllowAnyHeader()
@@ -19,6 +20,8 @@ builder.Services.AddCors(options =>
                .AllowCredentials();
     });
 });
+
+builder.Services.AddSingleton<SharedDb>();
 
 var app = builder.Build();
 
@@ -37,6 +40,6 @@ app.MapControllers();
 
 app.MapHub<ChatHub>("/Chat");
 
-app.UseCors();
+app.UseCors("reactApp");
 
 app.Run();
